@@ -2,8 +2,7 @@
 # set -x
 
 if [[ -z "${CLBRANCH}" ]]; then 
-    # echo " - DEFAULT BRANCH FOR CRYSTALLIB SET"
-    export CLBRANCH="development_integration"
+    export CLBRANCH="development_process"
 fi
 
 export OURHOME="$HOME"

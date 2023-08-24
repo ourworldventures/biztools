@@ -1,8 +1,26 @@
 # Ourworld Free Zone
 
-> see [https://despiegk.github.io/book_earth_regenerator/intro/intro_readme.html](https://ourworldfreezone.github.io/info_freezone/intro/intro_readme.html)
+> see [https://despiegk.github.io/...]()
 
-## To Develop 
+```bash
+cd /tmp
+curl -L https://github.com/ourworldventures/biztools/releases/download/initial/bizplanner_arm64 > bizplanner
+chmod +x bizplanner
+./bizplanner
+```
+
+## Requirements make sure redis is running
+
+```bash
+brew install redis
+brew services start redis
+```
+
+## To Develop for Planning tool
+
+> todo
+
+## To Develop for MDBook
 
 ### Requirements
 

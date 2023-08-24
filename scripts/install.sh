@@ -1,13 +1,9 @@
 set -ex
 
 if [[ -z "${CLBRANCH}" ]]; then 
-    export CLBRANCH="development_integration"
+    export CLBRANCH="development_process"
 fi
 
-
-if [[ -z "${BUILDERBRANCH}" ]]; then 
-    export BUILDERBRANCH="development"
-fi    
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -97,49 +93,6 @@ function crystal_lib_get {
 }
 
 
-function gridbuilder_get {
-
-    mkdir -p $DIR_CODE/github/threefoldtech
-    if [[ -d "$DIR_CODE/github/threefoldtech/builders" ]]
-    then
-        pushd $DIR_CODE/github/threefoldtech/vbuilders 2>&1 >> /dev/null
-        git pull
-        git checkout $BUILDERBRANCH
-        popd 2>&1 >> /dev/null
-    else
-        pushd $DIR_CODE/github/threefoldtech 2>&1 >> /dev/null
-        git clone --depth 1 --no-single-branch git@github.com:threefoldtech/builders.git
-        cd builders        
-        git checkout $BUILDERBRANCH
-        popd 2>&1 >> /dev/null
-    fi
-
-    mkdir -p ~/.vmodules/threefoldtech
-    rm -f ~/.vmodules/threefoldtech/builders
-    ln -s ~/code/github/threefoldtech/builders/builders ~/.vmodules/threefoldtech/builders
-
-
-}
-
-function buildx_install {
-    export BUILDXDEST=$HOME/.docker/cli-plugins/docker-buildx
-    mkdir -p $HOME/.docker/cli-plugins/
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-        export BUILDXURL='https://github.com/docker/buildx/releases/download/v0.10.2/buildx-v0.10.2.linux-amd64' 
-
-        rm -f $BUILDXDEST
-        curl -Lk $BUILDXURL > $BUILDXDEST
-        chmod +x $BUILDXDEST
-        docker buildx install
-        docker buildx create --use --name multi-arch-builder               
-
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        export BUILDXURL='https://github.com/docker/buildx/releases/download/v0.10.2/buildx-v0.10.2.darwin-arm64'
-        #dont think its needed for osx
-    fi
-
-}
-
 function v_install {
     set -e
     if [[ -z "${DIR_CODE_INT}" ]]; then 
@@ -196,62 +149,6 @@ function v_install {
     fi
 }
 
-
-
-
-function docker_install {
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then 
-
-        set +ex
-        apt-get remove docker docker-engine docker.io containerd runc -y 
-        set -ex
-
-        mkdir -p /etc/apt/keyrings
-
-        rm -f /etc/apt/keyrings/docker.gpg
-
-        curl -fksSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-        echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-        $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-        chmod a+r /etc/apt/keyrings/docker.gpg
-        
-        apt-get update -y
-
-        os_package_install docker-ce docker-ce-cli containerd.io docker-compose-plugin binfmt-support -y
-        # mkdir -p /proc/sys/fs/binfmt_misc
-        docker run hello-world
-    fi
-}
-
-# function crystal_tools_get {
-#     mkdir -p $DIR_CODE/github/freeflowuniverse
-#     if [[ -d "$DIR_CODE/github/freeflowuniverse/crystaltools" ]]
-#     then
-#         pushd $DIR_CODE/$2 2>&1 >> /dev/null
-#         # git pull
-#         popd 2>&1 >> /dev/null
-#     else
-#         pushd $DIR_CODE/github/freeflowuniverse 2>&1 >> /dev/null
-#         git clone --depth 1 --no-single-branch https://github.com/freeflowuniverse/crystaltools.git
-#         popd 2>&1 >> /dev/null
-#     fi
-#     if [[ -z "${CLBRANCH}" ]]; then 
-#     echo ' - no branch set'
-#     else
-#         if [[ "$CLBRANCH" == "development" ]]; then 
-#             echo
-#         else
-#             echo ' - switch to branch ${CLBRANCH} for publishtools'
-#             pushd $DIR_CODE/github/freeflowuniverse/crystaltools 2>&1 >> /dev/null
-#             git checkout $CLBRANCH
-#             git pull
-#             popd 2>&1 >> /dev/null
-#         fi
-#     fi
-# }
 
 
 #important to first remove
